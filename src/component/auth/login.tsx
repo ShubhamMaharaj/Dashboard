@@ -1,10 +1,10 @@
-import React , {useState} from "react";
+import React, { useState } from "react";
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     // Here you can add your login logic, for simplicity, I'll just call the `onLogin` callback with the username
     onLogin(username);
