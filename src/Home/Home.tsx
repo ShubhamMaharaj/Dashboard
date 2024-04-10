@@ -1,28 +1,13 @@
 import { useState } from 'react';
-import Login from '../component/auth/login';
+import Login from "../component/auth/login"
+import '../style/style.css'
 
 function Home() {
-
-    const [loggedIn, setLoggedIn] = useState(false);
-    const [username, setUsername] = useState('');
-
-    const handleLogin = (user) => {
-        setLoggedIn(true);
-        setUsername(user);
-    };
-
-
-    return (
+ return (
         <>
-            <div className="Home">
-                {!loggedIn ? (
-                    <Login onLogin={handleLogin} />
-                ) : (
-                    <div>
-                        <h1>Welcome, {username}!</h1>
-                        <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={() => setLoggedIn(false)}>Logout</button>
-                    </div>
-                )}
+            <div className="min-h-screen flex items-center justify-center bg-blue-100">
+                 
+                   <Login/>
             </div>
 
         </>
