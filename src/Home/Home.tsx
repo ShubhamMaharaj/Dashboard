@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import Login from "../component/auth/login"
 import '../style/style.css'
 
