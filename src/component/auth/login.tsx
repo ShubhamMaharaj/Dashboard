@@ -1,11 +1,41 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+
+
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    
+
+  
+      if (username === 'admin' && password === 'Testing@123') {
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Login successful!',
+        });
+       
+        navigate('/dashboard');
+      } else {
+    
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Invalid username or password',
+        });
+       
+      }
+        
+ 
+   
+
     // Handle login logic here
   };
 
@@ -41,12 +71,14 @@ const Login: React.FC = () => {
             />
           </div>
           <div className="text-center">
-            <button
-              type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              Login
-            </button>
+          
+              <button
+                type="submit"
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              >
+                Login
+              </button>
+           
           </div>
         </form>
       </div>
