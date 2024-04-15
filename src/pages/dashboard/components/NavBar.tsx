@@ -42,7 +42,7 @@ const Navbar: React.FC = () => {
     return (
         <div className="">
            <div className="w-full flex">
-               <nav className={`w-1/5 fixed left-0 top-0 bottom-0 bg-gray-800 h-screen bg-gray-800 w-64 transition-transform duration-300 transform ${isMenuOpen ? 'translate-x-0 ' : '-translate-x-full '}`}>
+               <nav className={`fixed left-0 top-0 bottom-0 bg-gray-800 h-screen bg-gray-800 w-64 transition-transform duration-300 transform ${isMenuOpen ? 'translate-x-0 ' : '-translate-x-full '}`}>
                 <div className="flex items-center justify-between h-16 px-4  border-white">
                     <div className="flex">
                         <h1 className="ml-2 text-white font-bold text-lg" style={{ fontSize: '2rem' }}>Admin Panel</h1>
