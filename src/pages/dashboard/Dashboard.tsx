@@ -15,12 +15,11 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="h-screen w-screen flex flex-col overflow-hidden">
+      
       {/* <TopBar className="z-10 relative" openMenu={handleMenuClick} /> */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="overflow-hidden w-full">
         <NavBar />
-        <main className="flex-1 overflow-y-auto">
-          {/* Your main content goes here */}
-        </main>
+       
       </div>
     </div>
   );

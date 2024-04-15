@@ -41,6 +41,9 @@ const AddPost: React.FC = () => {
                         onChange={handleCategoryChange}
                     >
                         <option value="">Select Category</option>
+                        <option value="">Select Category2</option>
+                        <option value="">Select Category3</option>
+                        <option value="">Select Category4</option>
                         {/* Add options for categories */}
                     </select>
                 </div>
