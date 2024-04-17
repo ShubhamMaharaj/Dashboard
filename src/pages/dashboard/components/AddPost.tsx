@@ -1,21 +1,56 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { getCategories } from "../../../utils/api";
+
+interface NewsPostData {
+    title: string;
+    content: string;
+    image?: string;
+    category: string[];
+    tags: string[];
+}
 
 const AddPost: React.FC = () => {
-    const [header, setHeader] = useState<string>("");
-    const [content, setContent] = useState<string>("");
-    const [category, setCategory] = useState<string>("");
     const [image, setImage] = useState<File | null>(null);
+    const [categories, setCategories] = useState([]);
+
+    const [newsPostData, setNewsPostData] = useState<NewsPostData>({
+        title: "",
+        content: "",
+        image: "",
+        category: [],
+        tags: []
+    });
+
+    // use effect 
+    useEffect(() => {
+        const cat = getCategories().then(category => {
+            // console.log(" cat: " + JSON.stringify(category));
+            setCategories(category.categories);
+        });
+    }, [])
+
+    // function 
 
     const handleHeaderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setHeader(e.target.value);
+        const newTitle = e.target.value;
+        setNewsPostData(prevData => ({
+            ...prevData,
+            title: newTitle
+        }));
     };
 
     const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setContent(e.target.value);
+        // newsPostData.content = e.target.value;
+        const newContent = e.target.value;
+        setNewsPostData(prevData => ({
+            ...prevData,
+            content: newContent
+        }))
     };
 
     const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setCategory(e.target.value);
+        const selectedCategories = e.target.value;
+        // setNewsPostData(selectedCategories)
     };
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,7 +61,41 @@ const AddPost: React.FC = () => {
 
     const handleSubmit = () => {
         // Handle form submission logic here
+        console.log(" submission", newsPostData);
+
     };
+    const uploadImage = async () => {
+        if (!image) {
+            alert('Please select an image');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('image', image);
+
+        try {
+            const response = await fetch('http://139.84.173.198:3000/api/v1/upload-image', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to upload image');
+            }
+
+            const data = await response.json();
+            console.log('Image uploaded successfully:', data.link);
+            setNewsPostData(prevData => ({
+                ...prevData,
+                image: data.link
+            }))
+            // You can do something with the uploaded image link here
+        } catch (error) {
+            console.error('Error uploading image:', error);
+        }
+    };
+
+
 
     return (
         <div className="container mx-auto mt-10 flex ml-12">
@@ -37,15 +106,16 @@ const AddPost: React.FC = () => {
                     <select
                         id="category"
                         className="border border-gray-300 rounded-md px-4 py-2 w-full"
-                        value={category}
+                        value={newsPostData.category || ''}
                         onChange={handleCategoryChange}
                     >
                         <option value="">Select Category</option>
-                        <option value="">Select Category2</option>
-                        <option value="">Select Category3</option>
-                        <option value="">Select Category4</option>
-                        {/* Add options for categories */}
+                        {/* Map over the categories array and create an <option> for each category */}
+                        {categories.map((category, index) => (
+                            <option key={index} value={category}>{category}</option>
+                        ))}
                     </select>
+
                 </div>
                 <div className="mb-4">
                     <label htmlFor="header" className="block text-gray-700 font-bold mb-2">Header</label>
@@ -53,7 +123,7 @@ const AddPost: React.FC = () => {
                         type="text"
                         id="header"
                         className="border border-gray-300 rounded-md px-4 py-2 w-full"
-                        value={header}
+                        value={newsPostData.title}
                         onChange={handleHeaderChange}
                     />
                 </div>
@@ -63,7 +133,7 @@ const AddPost: React.FC = () => {
                         id="content"
                         className="border border-gray-300 rounded-md px-4 py-2 w-full"
                         rows={5}
-                        value={content}
+                        value={newsPostData.content || ''}
                         onChange={handleContentChange}
                     ></textarea>
                 </div>
@@ -86,6 +156,9 @@ const AddPost: React.FC = () => {
                         <img src={URL.createObjectURL(image)} alt="Uploaded" className="max-w-40 h-auto" />
                     </div>
                 )}
+                <button onClick={uploadImage} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Upload Image
+                </button>
             </div>
         </div>
     );
