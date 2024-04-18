@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { getCategories } from "../../../utils/api";
-
+import { getCategories, postNews } from "../../../utils/api";
+import Select from 'react-select';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 interface NewsPostData {
     title: string;
     content: string;
@@ -8,11 +10,14 @@ interface NewsPostData {
     category: string[];
     tags: string[];
 }
-
+interface OptionType {
+    value: string;
+    label: string;
+}
 const AddPost: React.FC = () => {
     const [image, setImage] = useState<File | null>(null);
     const [categories, setCategories] = useState([]);
-
+    const [selectedCategories, setSelectedCategories] = useState<{ value: string; label: string; }[]>([]);
     const [newsPostData, setNewsPostData] = useState<NewsPostData>({
         title: "",
         content: "",
@@ -48,10 +53,20 @@ const AddPost: React.FC = () => {
         }))
     };
 
-    const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedCategories = e.target.value;
-        // setNewsPostData(selectedCategories)
+    const handleCategoryChange = (selectedOptions: OptionType[]) => {
+        setSelectedCategories(selectedOptions as { value: string; label: string; }[]);
+        const selectedCategoryValues = selectedOptions.map(option => option.value);
+
+        // Update newsPostData with selected category values
+        setNewsPostData(prevData => ({
+            ...prevData,
+            category: selectedCategoryValues
+        }));
+        // console.log(" Selected categories ", newsPostData);
+
     };
+
+
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -59,10 +74,24 @@ const AddPost: React.FC = () => {
         }
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         // Handle form submission logic here
-        console.log(" submission", newsPostData);
-
+        if (!newsPostData.title || !newsPostData.content || !selectedCategories.length) {
+            toast.error("Please fill in all fields.");
+            return;
+        }
+        const res = await postNews(newsPostData);
+        if (res.status === 201) {
+            console.log(" submission", res.status);
+            setNewsPostData({
+                title: "",
+                content: "",
+                image: "",
+                category: [],
+                tags: []
+            })
+            setSelectedCategories([]);
+        }
     };
     const uploadImage = async () => {
         if (!image) {
@@ -103,20 +132,16 @@ const AddPost: React.FC = () => {
                 <h1 className="text-2xl font-bold mb-4">Add Post</h1>
                 <div className="mb-4">
                     <label htmlFor="category" className="block text-gray-700 font-bold mb-2">Category</label>
-                    <select
+                    <Select
                         id="category"
                         className="border border-gray-300 rounded-md px-4 py-2 w-full"
-                        value={newsPostData.category || ''}
+                        options={categories.map(category => ({ value: category, label: category }))}
+                        value={selectedCategories}
                         onChange={handleCategoryChange}
-                    >
-                        <option value="">Select Category</option>
-                        {/* Map over the categories array and create an <option> for each category */}
-                        {categories.map((category, index) => (
-                            <option key={index} value={category}>{category}</option>
-                        ))}
-                    </select>
-
+                        isMulti // Enable multiple selection
+                    />
                 </div>
+
                 <div className="mb-4">
                     <label htmlFor="header" className="block text-gray-700 font-bold mb-2">Header</label>
                     <input
@@ -160,6 +185,7 @@ const AddPost: React.FC = () => {
                     Upload Image
                 </button>
             </div>
+            <ToastContainer />
         </div>
     );
 }
