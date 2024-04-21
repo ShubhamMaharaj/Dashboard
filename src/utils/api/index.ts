@@ -21,6 +21,7 @@ export async function getCategories() {
 
 export async function postNews(data: NewsPostData) {
     try {
+        console.log("bataa",data);
         const response = await axios.post(baseUrl + "/create-news", data);
         return response;
     } catch (error) {

@@ -15,15 +15,17 @@ const AllPosts: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        fetchPosts();
+        
+            fetchPosts();
+      
+        
     }, []);
 
     const fetchPosts = async () => {
         try {
             setLoading(true);
             const response = await getAllPost();
-            const newPosts = response;
-            setPosts(prevPosts => [...prevPosts, ...newPosts]);
+            setPosts(response); // Replace existing posts with new ones
             setPage(prevPage => prevPage + 1);
             setLoading(false);
         } catch (error) {
@@ -32,7 +34,7 @@ const AllPosts: React.FC = () => {
         }
     };
 
-    const handleDelete = async (postId: number) => {
+   const handleDelete = async (postId: number) => {
         try {
             await axios.delete(`YOUR_DELETE_ENDPOINT/${postId}`);
             setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
@@ -57,7 +59,8 @@ const AllPosts: React.FC = () => {
     };
 
     return (
-        <div>
+        <div className="w-full p-10">
+            <h1 className="text-2xl font-bold mb-4">All Post</h1>
             <div style={{ marginBottom: '20px', fontWeight: 'bold' }}>
                 <div style={{ display: 'inline-block', width: '10%' }}>ID</div>
                 <div style={{ display: 'inline-block', width: '20%' }}>Title</div>

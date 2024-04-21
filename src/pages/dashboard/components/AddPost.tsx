@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getCategories, postNews } from "../../../utils/api";
 import Select from 'react-select';
 import { ToastContainer, toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 import 'react-toastify/dist/ReactToastify.css';
 interface NewsPostData {
     title: string;
@@ -69,66 +70,98 @@ const AddPost: React.FC = () => {
 
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log(e);
         if (e.target.files && e.target.files[0]) {
             setImage(e.target.files[0]);
         }
     };
-
+    
     const handleSubmit = async () => {
-        // Handle form submission logic here
-        if (!newsPostData.title || !newsPostData.content || !selectedCategories.length) {
-            toast.error("Please fill in all fields.");
-            return;
-        }
-        const res = await postNews(newsPostData);
-        if (res.status === 201) {
-            console.log(" submission", res.status);
-            setNewsPostData({
-                title: "",
-                content: "",
-                image: "",
-                category: [],
-                tags: []
-            })
-            setSelectedCategories([]);
+        try {
+            const imageUploaded = await uploadImage();
+            if (!newsPostData.title || !newsPostData.content || !selectedCategories.length) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please fill all the fields!',
+                });
+                return;
+            }
+            if (!imageUploaded) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please upload an image!',
+                });
+                return;
+            }
+            const res = await postNews(newsPostData);
+            if (res.status === 201) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Submission successful!',
+                });
+                setNewsPostData({
+                    title: '',
+                    content: '',
+                    image: '',
+                    category: [],
+                    tags: [],
+                });
+                setImage('');
+
+                setSelectedCategories([]);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong!',
+            });
         }
     };
+    
     const uploadImage = async () => {
-        if (!image) {
-            alert('Please select an image');
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('image', image);
-
         try {
+            if (!image) {
+                throw new Error('Please select an image');
+            }
+    
+            const formData = new FormData();
+            formData.append('image', image);
+    
             const response = await fetch('http://139.84.173.198:3000/api/v1/upload-image', {
                 method: 'POST',
-                body: formData
+                body: formData,
             });
-
+    
             if (!response.ok) {
                 throw new Error('Failed to upload image');
             }
-
+    
             const data = await response.json();
             console.log('Image uploaded successfully:', data.link);
-            setNewsPostData(prevData => ({
+            setNewsPostData((prevData) => ({
                 ...prevData,
-                image: data.link
-            }))
-            // You can do something with the uploaded image link here
+                image: data.link,
+            }));
+            return true;
         } catch (error) {
-            console.error('Error uploading image:', error);
+            console.error('Error uploading image:', error.message);
+            setNewsPostData((prevData) => ({
+                ...prevData,
+                image: '', // Empty the image state in case of an error
+            }));
+            return false;
         }
     };
-
-
+    
 
     return (
-        <div className="container mx-auto mt-10 flex ml-12">
-            <div className="flex-1 mr-5">
+        <div className="w-full p-10" style={{ overflowY: 'scroll',maxHeight: '90vh' }}>
+            <div className="w-full" >
                 <h1 className="text-2xl font-bold mb-4">Add Post</h1>
                 <div className="mb-4">
                     <label htmlFor="category" className="block text-gray-700 font-bold mb-2">Category</label>
@@ -162,14 +195,7 @@ const AddPost: React.FC = () => {
                         onChange={handleContentChange}
                     ></textarea>
                 </div>
-                <button
-                    className="bg-blue-500 text-white font-bold py-2 px-4 rounded"
-                    onClick={handleSubmit}
-                >
-                    Submit
-                </button>
-            </div>
-            <div>
+                <div className="mb-4">
                 <h2 className="text-xl font-bold mb-4">Upload Image</h2>
                 <input
                     type="file"
@@ -181,10 +207,18 @@ const AddPost: React.FC = () => {
                         <img src={URL.createObjectURL(image)} alt="Uploaded" className="max-w-40 h-auto" />
                     </div>
                 )}
-                <button onClick={uploadImage} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                {/* <button onClick={uploadImage} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                     Upload Image
+                </button> */}
+            </div>
+                <button
+                    className="bg-blue-500 text-white font-bold py-2 px-4 rounded"
+                    onClick={handleSubmit}
+                >
+                    Submit
                 </button>
             </div>
+           
             <ToastContainer />
         </div>
     );
