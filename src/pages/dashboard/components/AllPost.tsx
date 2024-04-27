@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-import { getAllPost } from '../../../utils/api';
+import { getAllPost ,deletePost} from '../../../utils/api';
 
 const PAGE_SIZE = 10; // Number of items per page
 
@@ -41,6 +41,15 @@ const AllPosts: React.FC = () => {
       setLoading(false);
     }
   };
+  const handleDelete = async (id) => {
+    console.log(id);
+    const resp = await deletePost(id);
+    if(resp){
+        console.log("abc")
+        fetchPosts();
+    }
+
+  }
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
     console.log(page)
@@ -64,7 +73,7 @@ const AllPosts: React.FC = () => {
             <tr key={post.id} className="border-b ">
               <td className="px-4 py-2">{post.id}</td>
               <td className="px-4 py-2">{post.title}</td>
-              <td className="px-4 py-2">{post.content}</td>
+              <td className="px-4 py-2">{post.image}</td>
               <td className="px-4 py-2">{post.category.join(', ')}</td>
               <td className="px-4 py-2">
                     <button style={{ marginRight: '10px' }} onClick={() => handleEdit(post.id)}>Edit</button>
