@@ -11,6 +11,7 @@ interface NewsPostData {
     image?: string;
     category: string[];
     tags: string[];
+    linkSource?: string;
 }
 interface OptionType {
     value: string;
@@ -26,12 +27,13 @@ const AddPost: React.FC = () => {
         content: "",
         image: "",
         category: [],
-        tags: []
+        tags: [],
+        linkSource: ''
     });
     const [hubTypes, setHubTypes] = useState<string[]>([]);
     const [inputValue, setInputValue] = useState<string>('');
     const addTag2 = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter' || e.key === ',') {
+        if (e.key === 'Enter') {
             e.preventDefault();
             if (inputValue.trim() !== '') {
                 setHubTypes([...hubTypes, inputValue.trim()]);
@@ -62,7 +64,13 @@ const AddPost: React.FC = () => {
     }, [])
 
     // function 
-
+    const handleSourceLink = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newTitle = e.target.value;
+        setNewsPostData(prevData => ({
+            ...prevData,
+            linkSource: newTitle
+        }));
+    };
     const handleHeaderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newTitle = e.target.value;
         setNewsPostData(prevData => ({
@@ -113,7 +121,7 @@ const AddPost: React.FC = () => {
         }
     }, [imageLink])
     const handleSubmit = async () => {
-        console.log(" sdfsdf ", hubTypes, inputValue);
+        newsPostData.tags.push(...hubTypes);
         try {
             const imageUploaded = await uploadImage();
 
@@ -239,7 +247,7 @@ const AddPost: React.FC = () => {
                         ))}
                         <input
                             type="text"
-                            placeholder="   Enter Hub"
+                            placeholder="   Enter Tags..."
                             className="bg-gray-100 rounded-lg py-1 px-3 focus:outline-none focus:ring focus:border-blue-300"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
@@ -286,6 +294,16 @@ const AddPost: React.FC = () => {
                     {/* <button onClick={uploadImage} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                     Upload Image
                 </button> */}
+                </div>
+                <div className="mb-4">
+                    <label htmlFor="source" className="block text-gray-700 font-bold mb-2">Source*</label>
+                    <input
+                        type="text"
+                        id="source"
+                        className="border border-gray-300 rounded-md px-4 py-2 w-full"
+                        value={newsPostData.linkSource}
+                        onChange={handleSourceLink}
+                    />
                 </div>
                 <button
                     className="bg-blue-500 text-white font-bold py-2 px-4 rounded"
