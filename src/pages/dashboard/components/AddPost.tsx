@@ -16,7 +16,8 @@ interface OptionType {
     value: string;
     label: string;
 }
-const AddPost: React.FC = () => {
+
+const AddPost: React.FC = ({getPodtbyId,loseIsEdit}) => {
     const [image, setImage] = useState<File | null>(null);
     const [categories, setCategories] = useState([]);
     const [imageLink, setImageLink] = useState("");
@@ -30,6 +31,7 @@ const AddPost: React.FC = () => {
     });
     const [hubTypes, setHubTypes] = useState<string[]>([]);
     const [inputValue, setInputValue] = useState<string>('');
+    
     const addTag2 = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' || e.key === ',') {
             e.preventDefault();
@@ -81,6 +83,7 @@ const AddPost: React.FC = () => {
     };
 
     const handleCategoryChange = (selectedOptions: OptionType[]) => {
+        console.log("sel",selectedCategories);
         setSelectedCategories(selectedOptions as { value: string; label: string; }[]);
         const selectedCategoryValues = selectedOptions.map(option => option.value);
 
@@ -103,19 +106,46 @@ const AddPost: React.FC = () => {
     };
 
     useEffect(() => {
+        console.log("aaa",selectedCategories);
         setNewsPostData((prevData) => ({
             ...prevData,
             image: imageLink,
         }));
         // console.log(" image link ", imageLink, newsPostData);
-        if (newsPostData.image) {
+        if (newsPostData.image && !getPodtbyId) {
             finalCall()
         }
+        console.log(getPodtbyId);
+        if(getPodtbyId){
+            const cat = getPodtbyId.category.map(item => ({
+                value: item,
+                label: item
+              }));
+              console.log(cat);
+              
+          setSelectedCategories(cat as { value: string; label: string; }[]);
+            console.log("ccc",selectedCategories);
+           
+            setNewsPostData((prevData) => ({
+                ...prevData,
+                title: getPodtbyId.title,
+                content: getPodtbyId.content,
+                image: getPodtbyId.image,
+                category: getPodtbyId.category,
+                tags: getPodtbyId.tag
+            })); 
+            setImage(getPodtbyId.image);
+            
+        }
+        
+       
     }, [imageLink])
     const handleSubmit = async () => {
-        console.log(" sdfsdf ", hubTypes, inputValue);
+        console.log(" sdfsdf ",newsPostData);
         try {
+            if(!getPodtbyId){
             const imageUploaded = await uploadImage();
+            }
 
             if (!newsPostData.title || !newsPostData.content || !selectedCategories.length) {
                 Swal.fire({
@@ -125,15 +155,15 @@ const AddPost: React.FC = () => {
                 });
                 return;
             }
-            else if (!imageUploaded) {
+            else if (newsPostData.image == '') {
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
                     text: 'Please upload an image!',
                 });
                 return;
-            } else {
-                // finalCall()
+            } else if(getPodtbyId) {
+                finalCall()
             }
         } catch (error) {
             console.error('Error:', error);
@@ -148,10 +178,13 @@ const AddPost: React.FC = () => {
         const res = await postNews(newsPostData);
         if (res.status === 201) {
             Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: 'Submission successful!',
-            });
+                position: "top-end",
+                icon: "success",
+                title: "Submission successful!",
+                showConfirmButton: false,
+                timer: 1500
+              });
+            
             setNewsPostData({
                 title: '',
                 content: '',
@@ -160,8 +193,11 @@ const AddPost: React.FC = () => {
                 tags: [],
             });
             setImage('');
-
             setSelectedCategories([]);
+            if(getPodtbyId){
+                loseIsEdit();
+            }
+            
         }
     }
     const uploadImage = async () => {
@@ -280,7 +316,7 @@ const AddPost: React.FC = () => {
                     />
                     {image && (
                         <div className="mt-4">
-                            <img src={URL.createObjectURL(image)} alt="Uploaded" className="max-w-40 h-auto" />
+                            <img src={getPodtbyId?getPodtbyId.image:URL.createObjectURL(image)} alt="Uploaded" className="max-w-40 h-auto" />
                         </div>
                     )}
                     {/* <button onClick={uploadImage} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">

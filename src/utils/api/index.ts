@@ -39,16 +39,30 @@ export async function getAllPost() {
         throw error;
     }
 }
-<<<<<<< HEAD
 
 export async function uploadImage() {
     try {
         const response = await axios.get(baseUrl + "/upload-image");
-=======
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error;
+    }
+}
 export async function deletePost(id) {
     try {
         const response = await axios.delete(baseUrl + "/deleteNewsById/" +id);
->>>>>>> 9eaa96c (added delete feature)
+
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error;
+    }
+}
+export async function getPostbyId(id) {
+    try {
+        const response = await axios.get(baseUrl + "/getnewsbyid/" +id);
+
         return response.data;
     } catch (error) {
         console.error('Error fetching data:', error);
