@@ -49,3 +49,23 @@ export async function uploadImage() {
         throw error;
     }
 }
+export async function deletePost(id) {
+    try {
+        const response = await axios.delete(baseUrl + "/deleteNewsById/" +id);
+
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error;
+    }
+}
+export async function getPostbyId(id) {
+    try {
+        const response = await axios.get(baseUrl + "/getnewsbyid/" +id);
+
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error;
+    }
+}
