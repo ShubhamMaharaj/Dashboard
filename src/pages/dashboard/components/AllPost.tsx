@@ -3,27 +3,39 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { getAllPost, deletePost, getPostbyId } from '../../../utils/api';
 import Swal from 'sweetalert2';
-import { Link, useNavigate } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import AddPost from './AddPost';
 
 const PAGE_SIZE = 10; // Number of items per page
 
+interface Post {
+  id: number;
+  title: string;
+  content: string;
+  image?: string;
+  category: string[];
+  tags: string[];
+  newsSourceLink: string,
+  newsSourceName: string,
+  isPrimary: boolean,
+  isVisible: boolean,
+}
+
 const AllPosts: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [getPostById, setGetPostById] = useState<Post[]>([]);
+  const [getPostById, setGetPostById] = useState<Post | null>(null);
   const [Total, setTotal] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [loading, setLoading] = useState<boolean>(false);
+  // const [loading, setLoading] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(false);
-  const [showFullDescription, setShowFullDescription] = useState({});
-  const navigate = useNavigate();
+  // const [showFullDescription, setShowFullDescription] = useState({});
 
-  const toggleDescription = (postId) => {
-    setShowFullDescription({
-      ...showFullDescription,
-      [postId]: !showFullDescription[postId],
-    });
-  };
+  // const toggleDescription = (postId) => {
+  //   setShowFullDescription({
+  //     ...showFullDescription,
+  //     [postId]: !showFullDescription[postId],
+  //   });
+  // };
 
   useEffect(() => {
     fetchPosts();
@@ -32,7 +44,7 @@ const AllPosts: React.FC = () => {
 
   const fetchPosts = async () => {
     try {
-      setLoading(true);
+      // setLoading(true);1
       const response = await getAllPost();
       console.log("check", response.data);
       setTotal(response.length);
@@ -41,13 +53,13 @@ const AllPosts: React.FC = () => {
       const paginatedPosts = response.slice(startIndex, startIndex + PAGE_SIZE);
       setPosts(paginatedPosts);
 
-      setLoading(false);
+      // setLoading(false);
     } catch (error) {
       console.error('Error fetching posts: ', error);
-      setLoading(false);
+      // setLoading(false);
     }
   };
-  const handleDelete = (id) => {
+  const handleDelete = (id: number) => {
     console.log(id);
     Swal.fire({
       title: "Are you sure?",
@@ -76,7 +88,7 @@ const AllPosts: React.FC = () => {
 
 
   }
-  const handleEdit = async (id) => {
+  const handleEdit = async (id: number) => {
 
     var data = await getPostbyId(id)
 
@@ -91,11 +103,10 @@ const AllPosts: React.FC = () => {
   };
   const loseIsEdit = () => {
     setIsEdit(false);
-
   }
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
-    console.log(page)
+    console.log(page, event)
     setCurrentPage(page);
   };
 
@@ -138,7 +149,8 @@ const AllPosts: React.FC = () => {
 
   return (
     <>
-      {isEdit ? (<div style={{ paddingTop: "1rem" }}><Link style={{ marginLeft: '1rem', color: 'Blue' }} onClick={() => loseIsEdit()}>Back to List</Link>
+      {isEdit ? (<div style={{ paddingTop: "1rem" }}>
+        {/* <Link style={{ marginLeft: '1rem', color: 'Blue' }} onClick={() => loseIsEdit()}>Back to List</Link> */}
         <AddPost getPodtbyId={getPostById} loseIsEdit={loseIsEdit} />
 
       </div>) :

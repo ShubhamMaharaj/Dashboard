@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getCategories, postNews } from "../../../utils/api";
 import Select from 'react-select';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import Swal from 'sweetalert2';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
@@ -23,8 +23,14 @@ interface OptionType {
     label: string;
 }
 
-const AddPost: React.FC = ({ getPodtbyId, loseIsEdit }) => {
+interface AddPostProps {
+    getPodtbyId?: NewsPostData | null;
+    loseIsEdit?: () => void;
+}
+
+const AddPost = ({ getPodtbyId, loseIsEdit }: AddPostProps) => {
     const [image, setImage] = useState<File | null>(null);
+    const [imageByEdit, setImageByEdit] = useState<string | undefined>("");
     const [categories, setCategories] = useState([]);
     const [imageLink, setImageLink] = useState("");
     const [selectedCategories, setSelectedCategories] = useState<{ value: string; label: string; }[]>([]);
@@ -67,7 +73,7 @@ const AddPost: React.FC = ({ getPodtbyId, loseIsEdit }) => {
 
     // use effect 
     useEffect(() => {
-        const cat = getCategories().then(category => {
+        getCategories().then(category => {
             // console.log(" cat: " + JSON.stringify(category));
             setCategories(category.categories);
         });
@@ -146,21 +152,21 @@ const AddPost: React.FC = ({ getPodtbyId, loseIsEdit }) => {
                 content: getPodtbyId.content,
                 image: getPodtbyId.image,
                 category: getPodtbyId.category,
-                tags: getPodtbyId.tag,
+                tags: getPodtbyId.tags,
                 newsSourceName: getPodtbyId.newsSourceName,
                 newsSourceLink: getPodtbyId.newsSourceLink
             }));
-            setImage(getPodtbyId.image);
+            // setImage(getPodtbyId.image);
+            setImageByEdit(getPodtbyId.image)
 
         }
 
 
     }, [imageLink])
     const handleSubmit = async () => {
-        console.log(" sdfsdf ", newsPostData);
         try {
             if (!getPodtbyId) {
-                const imageUploaded = await uploadImage();
+                uploadImage();
             }
 
             if (!newsPostData.title || !newsPostData.content || !selectedCategories.length) {
@@ -212,9 +218,9 @@ const AddPost: React.FC = ({ getPodtbyId, loseIsEdit }) => {
                 isPrimary: false,
                 isVisible: true,
             });
-            setImage('');
+            setImage(null);
             setSelectedCategories([]);
-            if (getPodtbyId) {
+            if (getPodtbyId && loseIsEdit) {
                 loseIsEdit();
             }
 
@@ -243,7 +249,7 @@ const AddPost: React.FC = ({ getPodtbyId, loseIsEdit }) => {
 
             return true;
         } catch (error) {
-            console.error('Error uploading image:', error.message);
+            // console.error('Error uploading image:', error.message);
             setNewsPostData((prevData) => ({
                 ...prevData,
                 image: '', // Empty the image state in case of an error
@@ -264,7 +270,7 @@ const AddPost: React.FC = ({ getPodtbyId, loseIsEdit }) => {
                     className="border border-gray-300 rounded-md px-4 py-2 w-full"
                     options={categories.map(category => ({ value: category, label: category }))}
                     value={selectedCategories}
-                    onChange={handleCategoryChange}
+                    onChange={() => handleCategoryChange}
                     isMulti // Enable multiple selection
                 />
 
@@ -356,7 +362,7 @@ const AddPost: React.FC = ({ getPodtbyId, loseIsEdit }) => {
                     />
                     {image && (
                         <div className="mt-4">
-                            <img src={getPodtbyId ? getPodtbyId.image : URL.createObjectURL(image)} alt="Uploaded" className="max-w-40 h-auto" />
+                            <img src={getPodtbyId ? imageByEdit : URL.createObjectURL(image)} alt="Uploaded" className="max-w-40 h-auto" />
                         </div>
                     )}
                     {/* <button onClick={uploadImage} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">

@@ -49,9 +49,9 @@ export async function uploadImage() {
         throw error;
     }
 }
-export async function deletePost(id) {
+export async function deletePost(id: any) {
     try {
-        const response = await axios.delete(baseUrl + "/deleteNewsById/" +id);
+        const response = await axios.delete(baseUrl + "/deleteNewsById/" + id);
 
         return response.data;
     } catch (error) {
@@ -59,9 +59,9 @@ export async function deletePost(id) {
         throw error;
     }
 }
-export async function getPostbyId(id) {
+export async function getPostbyId(id: any) {
     try {
-        const response = await axios.get(baseUrl + "/getnewsbyid/" +id);
+        const response = await axios.get(baseUrl + "/getnewsbyid/" + id);
 
         return response.data;
     } catch (error) {

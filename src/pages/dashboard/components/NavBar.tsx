@@ -1,22 +1,20 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import MenuIcon from '@mui/icons-material/Menu';
-import ClearIcon from '@mui/icons-material/Clear';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PostAddIcon from '@mui/icons-material/PostAdd';
-import PersonIcon from '@mui/icons-material/Person';
-import RefreshIcon from '@mui/icons-material/Refresh';
-import LogoutIcon from '@mui/icons-material/Logout';
 import AddPost from "./AddPost";
 import HomePage from "./HomePage";
-import Swal from 'sweetalert2';
 import TopHead from "./TopHead";
 import AllPosts from "./AllPost";
 
+interface ShowType {
+  showAddPost: boolean;
+  showHomePage: boolean;
+  showAllPosts: boolean;
+}
 
 const Navbar: React.FC = () => {
 
-  const [showStates, setShowStates] = useState({
+  const [showStates, setShowStates] = useState<ShowType>({
     showAddPost: false,
     showHomePage: true,
     showAllPosts: false
@@ -26,21 +24,18 @@ const Navbar: React.FC = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const toggleComponent = (componentName) => {
+  const toggleComponent = (componentName: keyof ShowType): void => {
     setShowStates((prevState) => {
-      const updatedStates = {};
-      // Set the state of the clicked component to true
+      const updatedStates: ShowType = {} as ShowType;
       updatedStates[componentName] = true;
-      // Set the state of all other components to false
       Object.keys(prevState).forEach((key) => {
         if (key !== componentName) {
-          updatedStates[key] = false;
+          updatedStates[key as keyof ShowType] = false;
         }
       });
       return updatedStates;
     });
   };
-
   return (
     <div className="">
       <div className="w-full flex">
