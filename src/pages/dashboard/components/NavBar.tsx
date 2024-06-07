@@ -1,15 +1,17 @@
-import React, { useState } from "react";
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PostAddIcon from '@mui/icons-material/PostAdd';
+import React, { useState } from "react";
 import AddPost from "./AddPost";
-import HomePage from "./HomePage";
-import TopHead from "./TopHead";
 import AllPosts from "./AllPost";
+import HomePage from "./HomePage";
+import PushNotification from './PushNotification';
+import TopHead from "./TopHead";
 
 interface ShowType {
   showAddPost: boolean;
   showHomePage: boolean;
   showAllPosts: boolean;
+  showPushNotification: boolean;
 }
 
 const Navbar: React.FC = () => {
@@ -17,7 +19,8 @@ const Navbar: React.FC = () => {
   const [showStates, setShowStates] = useState<ShowType>({
     showAddPost: false,
     showHomePage: true,
-    showAllPosts: false
+    showAllPosts: false,
+    showPushNotification: false
   });
   const [isMenuOpen, setIsMenuOpen] = useState(true);
   const toggleMenu = () => {
@@ -62,6 +65,10 @@ const Navbar: React.FC = () => {
                   <PostAddIcon className="inline-block h-6 w-6" />
                   <span className="ml-2">All Post</span>
                 </button>
+                <button className="block py-2 px-4 text-white w-full text-left hover:bg-gray-700" onClick={() => toggleComponent('showPushNotification')}>
+                  <PostAddIcon className="inline-block h-6 w-6" />
+                  <span className="ml-2">Push Notification</span>
+                </button>
               </li>
               {/* Add more ListItems for other components */}
             </ul>
@@ -77,6 +84,7 @@ const Navbar: React.FC = () => {
           {showStates.showHomePage && <HomePage />}
           {showStates.showAddPost && <AddPost />}
           {showStates.showAllPosts && <AllPosts />}
+          {showStates.showPushNotification && <PushNotification />}
         </div>
 
       </div>

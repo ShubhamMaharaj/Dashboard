@@ -1,10 +1,10 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { getCategories, postNews } from "../../../utils/api";
 import Select from 'react-select';
 import { ToastContainer } from 'react-toastify';
-import Swal from 'sweetalert2';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from "axios";
+import Swal from 'sweetalert2';
+import { getCategories, postNews } from "../../../utils/api";
 // import { CKEditor } from '@ckeditor/ckeditor5-react';
 // import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 interface NewsPostData {
@@ -74,8 +74,8 @@ const AddPost = ({ getPodtbyId, loseIsEdit }: AddPostProps) => {
     // use effect 
     useEffect(() => {
         getCategories().then(category => {
-            // console.log(" cat: " + JSON.stringify(category));
             setCategories(category.categories);
+            console.log(" cat: " + JSON.stringify(category));
         });
     }, [])
 

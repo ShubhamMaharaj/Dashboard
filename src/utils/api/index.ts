@@ -9,6 +9,11 @@ interface NewsPostData {
     category: string[];
     tags: string[];
 }
+interface SendNotificationType {
+    customTitle: string;
+    customDescription: string;
+    id: number | null;
+}
 export async function getCategories() {
     try {
         const response = await axios.get(baseUrl + "/getCategories");
@@ -64,6 +69,15 @@ export async function getPostbyId(id: any) {
         const response = await axios.get(baseUrl + "/getnewsbyid/" + id);
 
         return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error;
+    }
+}
+export async function SendNotification(data: SendNotificationType) {
+    try {
+        const response = await axios.post(baseUrl + "/send-notification", data);
+        return response;
     } catch (error) {
         console.error('Error fetching data:', error);
         throw error;

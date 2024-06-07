@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-import { getAllPost, deletePost, getPostbyId } from '../../../utils/api';
+import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
+import { deletePost, getAllPost, getPostbyId } from '../../../utils/api';
 // import { Link } from 'react-router-dom';
 import AddPost from './AddPost';
 
