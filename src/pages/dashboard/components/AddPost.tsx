@@ -73,11 +73,15 @@ const AddPost = ({ getPodtbyId, loseIsEdit }: AddPostProps) => {
 
     // use effect 
     useEffect(() => {
-        getCategories().then(category => {
-            setCategories(category.categories);
-            console.log(" cat: " + JSON.stringify(category));
-        });
-    }, [])
+        handleCategory();
+    }, []);
+
+    const handleCategory = async () => {
+        const cat = await getCategories();
+        setCategories(cat.categories)
+        console.log(" cat await ",categories);
+        
+    }
 
     // function 
     const handleNewsData = (e: React.ChangeEvent<HTMLInputElement>, objectKey: string) => {
@@ -93,16 +97,15 @@ const AddPost = ({ getPodtbyId, loseIsEdit }: AddPostProps) => {
 
 
     const handleCategoryChange = (selectedOptions: OptionType[]) => {
-        // console.log("sel", selectedCategories);
         setSelectedCategories(selectedOptions as { value: string; label: string; }[]);
         const selectedCategoryValues = selectedOptions.map(option => option.value);
-
+        console.log("sel", selectedCategoryValues);
         // Update newsPostData with selected category values
         setNewsPostData(prevData => ({
             ...prevData,
             category: selectedCategoryValues
         }));
-        // console.log(" Selected categories ", newsPostData);
+        console.log(" Selected categories ", newsPostData.category);
 
     };
 
