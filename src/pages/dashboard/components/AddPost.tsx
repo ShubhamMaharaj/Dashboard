@@ -273,7 +273,7 @@ const AddPost = ({ getPodtbyId, loseIsEdit }: AddPostProps) => {
                     className="border border-gray-300 rounded-md px-4 py-2 w-full"
                     options={categories.map(category => ({ value: category, label: category }))}
                     value={selectedCategories}
-                    onChange={() => handleCategoryChange}
+                    onChange={handleCategoryChange}
                     isMulti // Enable multiple selection
                 />
 

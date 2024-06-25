@@ -28,8 +28,8 @@ const PushNotification: React.FC = () => {
     const fetchPosts = async () => {
         try {
             const response = await getAllPost();
-            const posts: Post[] = response.data;
-            console.log("posts:", posts);
+            console.log("posts:", response);
+            const posts: Post[] = response;
 
             const categoryOptions = posts.map(post => {
                 // console.log("post", post);
